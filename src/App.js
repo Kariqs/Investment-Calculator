@@ -4,10 +4,15 @@ import InvestmentForm from "./components/InvestmentForm";
 import InvestmentTable from "./components/InvestmentTable";
 
 function App() {
-  const [result, setResults] = useState(null);
+  const [userInput, setUserInput] = useState(null);
 
   const calculateHandler = (userInput) => {
-    const yearlyData = [];
+    setUserInput(userInput);
+  };
+
+  const yearlyData = [];
+
+  if (userInput) {
     let currentSavings = +userInput["current-savings"];
     const yearlyContribution = +userInput["yearly-contribution"];
     const expectedReturn = +userInput["expected-return"] / 100;
@@ -24,9 +29,7 @@ function App() {
         yearlyContribution: yearlyContribution,
       });
     }
-
-    setResults(yearlyData);
-  };
+  }
 
   return (
     <div>
@@ -34,7 +37,15 @@ function App() {
       <InvestmentForm onCalculate={calculateHandler} />
       {/* Todo: Show below table conditionally (only once result data is available) */}
       {/* Show fallback text if no data is available */}
-      <InvestmentTable />
+      {!userInput && (
+        <p style={{ textAlign: "center" }}>No investment calculated.</p>
+      )}
+      {userInput && (
+        <InvestmentTable
+          data={yearlyData}
+          initialInvestment={userInput["current-savings"]}
+        />
+      )}
     </div>
   );
 }
